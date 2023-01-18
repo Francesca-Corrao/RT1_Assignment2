@@ -12,11 +12,12 @@ First the repository need to be downloaded with the command
 this need to be done inside the src folder of a ROS workspace, then the folder created need to be renamed into 'pkg_assignmnet2'.
 
 As said before to make easy the execution of the file a launch file was made. So what need to be done is:
-* start the ROS core: writing the command  ''' roscore''' in a terminal or execute it in background with the command 
+* start the ROS core: writing the command  ``` roscore``` in a terminal or execute it in background with the command 
 * open two different terminal
-* in one terminal launch the enviroment provided writing ''' roslaunch assignment_2_2022 assignment1.launch'''
-* in the other terminal launch the node developed writing  ''' roslaunch pkg_assignmnet2 ass2.launch'''.
-
+* in one terminal launch the enviroment provided writing ``` roslaunch assignment_2_2022 assignment1.launch```
+* in the other terminal launch the node developed writing  ``` roslaunch pkg_assignmnet2 ass2.launch ```.
+The launch file only start nodeA and nodeC because they are the only nodes who have to work all the time. 
+NodeB execute only when called, and to run it in a terminal need to write the command ```rosrun pkg_assignment2 nodeB.py ```
 
 How it works
 -----------------
