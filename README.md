@@ -10,6 +10,7 @@ How to run the solution
 First the repository need to be downloaded with the command
 '''git clone https://github.com/Francesca-Corrao/RT1_Assignmen2'''
 this need to be done inside the src folder of a ROS workspace, then the folder created need to be renamed into 'pkg_assignmnet2'.
+
 As said before to make easy the execution of the file a launch file was made. So what need to be done is:
 * start the ROS core: writing the command  ''' roscore''' in a terminal or execute it in background with the command 
 * open two different terminal
