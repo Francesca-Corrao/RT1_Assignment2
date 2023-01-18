@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+	<param name= "my_freq" value= "10"/>
+	<node pkg="pkg_assignment2" type="nodeA.py" name="nodeA" output="screen"/>
+	<node pkg="pkg_assignment2" type="nodeC.py" name="nodeC" output="screen" />
+</launch> 
