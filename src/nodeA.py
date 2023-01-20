@@ -6,6 +6,8 @@ import actionlib.msg
 import assignment_2_2022.msg
 import time
 import math
+import select
+import sys
 from geometry_msgs.msg import  Pose, Point, PoseStamped, Vector3
 from nav_msgs.msg import Odometry
 from pkg_assignment2.msg import Custom
@@ -22,15 +24,15 @@ canc=0
 reached=0
 
 def clbk_odom(msg):
-	global position
+	global position, desired_position
 	global send
     # position
 	position = msg.pose.pose.position
 	linear = msg.twist.twist.linear
 	v_angular =msg.twist.twist.angular
     #print(position_)
-	send.x=position.x
-	send.y=position.y
+	send.x=position.x-desired_position.x
+	send.y=position.y-desired_position.y
 	send.vel_x=linear.x
 	send.vel_y=linear.y
 	#publish (x,y,vel_x, vel_y)
@@ -54,9 +56,9 @@ def nodeA_client():
 		print("Taking new coordinates to reach (x,y)")
 		#take input from keyboard(x,y)
 		val= input("Enter the value(integer) of x to reach:\n");
-		x=int(val);
+		x=float(val);
 		val= input("Enter the value(integer) of y to reach:\n");
-		y=int(val);
+		y=float(val);
 		
 		#update the target pose
 		target.pose.position.x=x
@@ -73,26 +75,27 @@ def nodeA_client():
 		err_pos = math.sqrt(pow(desired_position.y - position.y, 2) +
                         pow(desired_position.x - position.x, 2))
 		#while target isn't reach
+		print("When you want to cancel the goal press y on keyboard")
 		while(err_pos>dist_precision):
-			print("distance:", err_pos)
-			val= input("Want to cancel the goal ?[y/n]\n")
+			put = select.select([sys.stdin],[],[],1)[0]
 			err_pos = math.sqrt(pow(desired_position.y - position.y, 2) +
                         pow(desired_position.x - position.x, 2))
 			if err_pos<dist_precision :
 				break
-			if val=='y':
+			if put: 
+				v=sys.stdin.readline().rstrip()
+
+				if v=='y':
 				#cancel the goal
-				client.cancel_goal()
-				canc+=1
-				print("goal cancelled")
-				break
-			elif val == 'n':
+					client.cancel_goal()
+					canc+=1
+					print("goal cancelled")
+					break
+				else:
 				#don't cancel the goal
-				print("reaching the goal")
-				time.sleep(5)
+					print("invalid input-reaching the goal")
 			else:
-				print("invalid input\n")
-			err_pos = math.sqrt(pow(desired_position.y - position.y, 2) +
+				err_pos = math.sqrt(pow(desired_position.y - position.y, 2) +
                         pow(desired_position.x - position.x, 2))
 		if(err_pos<dist_precision):
 			reached+=1

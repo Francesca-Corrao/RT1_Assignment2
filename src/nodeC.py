@@ -14,10 +14,6 @@ def clbk(msg):
 	vel_x=msg.vel_x
 	vel_y=msg.vel_y
 	
-
-def clbk_odom(msg):
-	rospy.loginfo("odom)position (x:%f, y:%f) velocity(v_x:%f, v_y %f)", msg.pose.pose.position.x, msg.pose.pose.position.y, msg.twist.twist.linear.x, msg.twist.twist.linear.y)
-	
 	
 if __name__== '__main__':
 	global x,y,vel_x, vel_y
@@ -28,10 +24,9 @@ if __name__== '__main__':
 	#initialize rospy node
 	rospy.init_node("nodeC_py")
 	sub = rospy.Subscriber("ass/pos_vel", Custom, clbk);
-	#sub_odom = rospy.Subscriber('/odom', Odometry, clbk_odom)
 	freq=rospy.get_param("my_freq")
 	while not rospy.is_shutdown():
 		time.sleep(freq)
-		rospy.loginfo("position (x:%f, y:%f) velocity(v_x:%f, v_y %f)", x, y, vel_x, vel_y)
+		rospy.loginfo("target_distance (x:%f, y:%f) velocity(v_x:%f, v_y %f)", x, y, vel_x, vel_y)
 		
 
