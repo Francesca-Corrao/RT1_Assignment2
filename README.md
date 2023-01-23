@@ -1,21 +1,21 @@
 Research Track I: Assignment 2
 ================================
 This the repository for the solution of Research Track 1 second assignment.
-The goal of the assignment is to develop a ROS package containing the develop of three Ros nodes to interact with the envoriment provided in the package https://github.com/CarmineD8/assignment_2_2022 that make the robot move in an arena.
-The assignment was develop by write the nodes in Python, and add the necessary directory and modify the CMake File in order to make everything work proprely.
-In order to make the execution of the code more user friendly a launch file can be found.
+The goal of the assignment is to develop a ROS package containing the develop of three Ros nodes to interact with the envoriment provided in the package https://github.com/CarmineD8/assignment_2_2022 that makes the robot move in an arena.
+The assignment was developed by write the nodes in Python, add the necessary directory and modify the CMake File in order to make everything work proprely.
+In order to make the execution of the code more user friendly a launch file was also develop.
 
 How to run the solution
 ------------------------
 First the repository need to be downloaded with the command
 ``` git clone https://github.com/Francesca-Corrao/RT1_Assignmen2 ```
-this need to be done inside the src folder of a ROS workspace, then the folder created need to be renamed into 'pkg_assignmnet2'.
+this need to be done inside the src folder of a ROS workspace, then the folder created need to be renamed into 'pkg_assignment2'.
 
 As said before to make easy the execution of the file a launch file was made. So what need to be done is:
-* start the ROS core: writing the command  ``` roscore``` in a terminal or execute it in background with the command 
+* start the ROS core: writing the command  ``` roscore```
 * open two different terminal
 * in one terminal launch the enviroment provided writing ``` roslaunch assignment_2_2022 assignment1.launch```
-* in the other terminal launch the node developed writing  ``` roslaunch pkg_assignmnet2 ass2.launch ```.
+* in the other terminal launch the node developed writing  ``` roslaunch pkg_assignment2 ass2.launch ```.
 The launch file only start nodeA and nodeC because they are the only nodes who have to work all the time. 
 NodeB execute only when called, and to run it in a terminal need to write the command ```rosrun pkg_assignment2 nodeB.py ```
 
@@ -24,9 +24,9 @@ How it works
 
 ### Node A ###
 Node A is the main node and it's in charge of multiple things:
-* Action client node, it takes from input the coordinates the robot has to reach and send them to the Action Server that makthe robot move in order to actually reach them. 
-* Service server send when a request is made the info about the number of goal reached or canceled on the topic 'ass/goal' using a custom Service Goal.
-* Publisher of custom messages (defined as Custom) on the topic 'ass/pos_vel'.
+* Action client node, it takes from input the coordinates the robot has to reach and send them to the Action Server that makes the robot move in order to actually reach them. 
+* Service server, it send on the topic 'ass/goal' the info about the number of goal reached or canceled using a custom Service Goal when a request is made.
+* Publisher of custom messages (defined as Custom) describing the distance of the robot from the target and the  velocity of the robot on the topic 'ass/pos_vel' each time it get the new position from the message published by odom.
 
 Let's see the pseudo code of the Node A, and the code of the different functions used.
 
@@ -62,7 +62,7 @@ main:
   nodeA_client()
 ```
 #### nodeA_client() ####
-this is the function that start the action client, take the input from keyboard sernd to the action server and then cancel the goal if the user ask to.
+this is the function that start the action client, take the input from keyboard, send it to the action server and then cancel the goal if the user asks to.
 After the coordinates to reach are passed to it by writing some float on the shell when asked, to cancel the goal it look in the terminal in a non blocking way and when 'y' is written it cancel the goal.
 ``` python 
 def nodeA_client();
@@ -110,22 +110,24 @@ def clbk_odom(msg):
   pub.publish(send) #publish the customer server
 ```
 #### clbk_serv() ####
-function called each time the service it's requested
+function called each time a request is made to the service server and just return the number of goal reached and cancelled.
 ```python
   def clbk_srv():
     return GoalResponse(reached, canc)
 ```
 
 ### Node B ###
-It's a node that make a request to the service server on topic 'ass/goal' to know the number of goal reached and the number of goal cancelled. After it receive the response and print the result obtained it end its execution.
+It's a node that makes a request to the service server on topic 'ass/goal' to know the number of goal reached and the number of goal cancelled. After it receives the response and print the result obtained it ends its execution.
 
 ### Node C ###
-It's a node subscribed to the custtome message public on the topic 'ass/pos' from which read the distance the robot has from the target  and the velocity of the robot and print them whit a frequency set in a ros parameter.
+It's a node subscribed to the custome message published on the topic 'ass/pos' from which it reads the distance the robot has from the target and the robot's velocity, it prints them whit a frequency set in the ros parameter 'my_freq' .
 
 ### Launch file ###
 the launch file it's a very helpful tool for a ROS package because it could start nodes, set parameter and call other launch files. 
 
 The launch file written for this assignment it's in charge to set the parameter use by NodeC to set the frequency to print the informations read and then launch NodeA and NodeC.
 It doesn't launch NodeB because it's execution end once it print the result and if it's launched at the beginning there aren't any goal send yet so it will print only 0,0.
+It can launch also the environment of the simulation but the decision to not launch it was takes because the output of the environment doesn't make clearly to see the output of nodeC.
+
 
 
