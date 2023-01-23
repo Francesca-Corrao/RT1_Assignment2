@@ -31,8 +31,7 @@ Node A is the first an main node it's in charge of multiple things:
 Let's see the pseudo code of the Node A, and the code of the different functions it uses.
 
 #### main ####
-```
-python 
+```python 
 main:
   rospy.init() #init Rosnode
   subscribe to Odometry messages 
@@ -43,8 +42,7 @@ main:
 #### nodeA_client() ####
 this is the function that start the action client, take the input from keyboard sernd to the action server and then cancel the goal if the user ask to.
 After the coordinates to reach are passed to it by writing some float on the shell when asked, to cancel the goal it look in the terminal in a non blocking way and when 'y' is written it cancel the goal.
-```
-python
+``` python 
 def nodeA_client();
   client = actionlib.SimpleActionClient() #start action client
   client.wait_for_server() #wait until the action server isn't start
