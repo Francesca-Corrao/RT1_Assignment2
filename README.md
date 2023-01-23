@@ -30,7 +30,7 @@ Node A is the first an main node it's in charge of multiple things:
 
 Let's see the pseudo code of the Node A, and the code of the different functions it uses.
 
-## main ##
+#### main ####
 ```
 python 
 main:
