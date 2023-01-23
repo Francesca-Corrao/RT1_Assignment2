@@ -24,9 +24,9 @@ How it works
 
 ### Node A ###
 Node A is the first an main node it's in charge of multiple things:
-*Action client node of the Action Servive that make the robot move in the arena. 
-*Service server for node B writing the info about the number of goal reached or canceled on the topic 'ass/goal' using a custom Service 
-*Publisher of custom messages on the topic 'ass/pos_vel'.
+* Action client node of the Action Servive that make the robot move in the arena. 
+* Service server for node B writing the info about the number of goal reached or canceled on the topic 'ass/goal' using a custom Service 
+* Publisher of custom messages on the topic 'ass/pos_vel'.
 
 
 ### Node B ###
