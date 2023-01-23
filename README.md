@@ -24,10 +24,20 @@ How it works
 
 ### Node A ###
 Node A is the first an main node it's in charge of multiple things:
-* Action client node of the Action Servive that make the robot move in the arena. 
+* Action client node, it takes from input the coordinates the robot has to reach and send them to the Action Server that makthe robot move in order to actually reach them. 
 * Service server for node B writing the info about the number of goal reached or canceled on the topic 'ass/goal' using a custom Service 
 * Publisher of custom messages on the topic 'ass/pos_vel'.
+Let's see the pseudo code of the Node A, and the code of the different functions it uses.
 
+```
+python 
+main:
+  init mode
+  subscribe to Odometry messages 
+  start the service on the topic 'ass/goal'
+  start the publish of Custom message on the topic 'ass/pos_vel'
+  nodeA_client()
+```
 
 ### Node B ###
 it's just a service node
