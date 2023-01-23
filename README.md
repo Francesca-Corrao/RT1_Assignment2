@@ -95,7 +95,15 @@ function called each time the service it's requested
 ```
 
 ### Node B ###
-it's just a service node
+It's a node that make a request to the service server on topic 'ass/goal' to know the number of goal reached and the number of goal cancelled. After it receive the response and print the result obtained it end its execution.
 
 ### Node C ###
-is  a subscriber
+It's a node subscribed to the custtome message public on the topic 'ass/pos' from which read the distance the robot has from the target  and the velocity of the robot and print them whit a frequency set in a ros parameter.
+
+### Launch file ###
+the launch file it's a very helpful tool for a ROS package because it could start nodes, set parameter and call other launch files. 
+
+The launch file written for this assignment it's in charge to set the parameter use by NodeC to set the frequency to print the informations read and then launch NodeA and NodeC.
+It doesn't launch NodeB because it's execution end once it print the result and if it's launched at the beginning there aren't any goal send yet so it will print only 0,0.
+
+
