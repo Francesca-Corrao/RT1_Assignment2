@@ -75,7 +75,7 @@ def nodeA_client();
       reached +=1
 ```
 
-#### clbk_odom ####
+#### clbk_odom() ####
 this is a function called each time message is publish on the '/odom' topic and it will publish a message about the velocity of the robot an the distance it has from the target.
 ```python 
 def clbk_odom(msg):
@@ -87,7 +87,7 @@ def clbk_odom(msg):
 	send.vel_y=linear.y
   pub.publish(send) #publish the customer server
 ```
-#### clbk_serv ####
+#### clbk_serv() ####
 function called each time the service it's requested
 ```python
   def clbk_srv():
