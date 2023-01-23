@@ -27,6 +27,7 @@ Node A is the first an main node it's in charge of multiple things:
 * Action client node, it takes from input the coordinates the robot has to reach and send them to the Action Server that makthe robot move in order to actually reach them. 
 * Service server for node B writing the info about the number of goal reached or canceled on the topic 'ass/goal' using a custom Service 
 * Publisher of custom messages on the topic 'ass/pos_vel'.
+
 Let's see the pseudo code of the Node A, and the code of the different functions it uses.
 
 ## main ##
