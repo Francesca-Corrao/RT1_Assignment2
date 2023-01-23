@@ -23,20 +23,20 @@ How it works
 -----------------
 
 ### Node A ###
-Node A is the first an main node it's in charge of multiple things:
+Node A is the main node and it's in charge of multiple things:
 * Action client node, it takes from input the coordinates the robot has to reach and send them to the Action Server that makthe robot move in order to actually reach them. 
-* Service server for node B writing the info about the number of goal reached or canceled on the topic 'ass/goal' using a custom Service 
-* Publisher of custom messages on the topic 'ass/pos_vel'.
+* Service server send when a request is made the info about the number of goal reached or canceled on the topic 'ass/goal' using a custom Service Goal.
+* Publisher of custom messages (defined as Custom) on the topic 'ass/pos_vel'.
 
-Let's see the pseudo code of the Node A, and the code of the different functions it uses.
+Let's see the pseudo code of the Node A, and the code of the different functions used.
 
 #### main ####
 ```python 
 main:
   rospy.init() #init Rosnode
-  subscribe to Odometry messages 
-  start the service on the topic 'ass/goal'
-  start the publish of Custom message on the topic 'ass/pos_vel'
+  rospy.Subscriber('/odom', Odometry, clbk_odom) #subscribe to Odometry messages 
+  rospy.Service("ass/goal", Goal, clbk_srv) #start the service on the topic 'ass/goal'
+  pub=rospy.Publisher("ass/pos_vel", Custom, queue_size=10) #start the publish of Custom message on the topic 'ass/pos_vel'
   nodeA_client()
 ```
 #### nodeA_client() ####
