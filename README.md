@@ -32,6 +32,28 @@ Let's see the pseudo code of the Node A, and the code of the different functions
 
 #### main ####
 ```python 
+#import all the necessary library
+import rospy
+import actionlib
+import actionlib.msg
+import assignment_2_2022.msg
+import time
+import math
+import select
+import sys
+from geometry_msgs.msg import  Pose, Point, PoseStamped, Vector3
+from nav_msgs.msg import Odometry
+from pkg_assignment2.msg import Custom
+from pkg_assignment2.srv import Goal, GoalResponse
+
+#define global variables used by different function
+target = PoseStamped()
+position = Point()
+t_precision = 0.5
+send=Custom()
+canc=0
+reached=0
+
 main:
   rospy.init() #init Rosnode
   rospy.Subscriber('/odom', Odometry, clbk_odom) #subscribe to Odometry messages 
