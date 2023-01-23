@@ -29,6 +29,7 @@ Node A is the first an main node it's in charge of multiple things:
 * Publisher of custom messages on the topic 'ass/pos_vel'.
 Let's see the pseudo code of the Node A, and the code of the different functions it uses.
 
+## main ##
 ```
 python 
 main:
