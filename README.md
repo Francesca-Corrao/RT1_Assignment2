@@ -73,7 +73,6 @@ def nodeA_client();
         recompute err_pos
     if(err_pos < dist_precision):
       reached +=1
-
 ```
 
 #### clbk_odom ####
