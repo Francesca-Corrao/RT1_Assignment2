@@ -113,7 +113,7 @@ def clbk_odom(msg):
 function called each time the service it's requested
 ```python
   def clbk_srv():
-    return Response(reached, canc)
+    return GoalResponse(reached, canc)
 ```
 
 ### Node B ###
