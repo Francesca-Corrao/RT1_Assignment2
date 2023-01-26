@@ -1,8 +1,8 @@
 Research Track I: Assignment 2
 ================================
-This the repository for the solution of Research Track 1 second assignment.
-The goal of the assignment is to develop a ROS package containing the develop of three Ros nodes to interact with the envoriment provided in the package https://github.com/CarmineD8/assignment_2_2022 that makes the robot move in an arena.
-The assignment was developed by write the nodes in Python, add the necessary directory and modify the CMake File in order to make everything work proprely.
+This is the repository for the solution of Research Track 1 second assignment.
+The goal of the assignment is to develop a ROS package containing the develop of three Ros nodes to interact with the envoriment provided in the package https://github.com/CarmineD8/assignment_2_2022 which makes a robot move in an arena.
+The assignment was developed by writing the nodes in Python, adding the necessary directory and modifing the CMake File.
 In order to make the execution of the code more user friendly a launch file was also develop.
 
 How to run the solution
@@ -14,19 +14,22 @@ this need to be done inside the src folder of a ROS workspace, then the folder c
 As said before to make easy the execution of the file a launch file was made. So what need to be done is:
 * start the ROS core: writing the command  ``` roscore```
 * open two different terminal
-* in one terminal launch the enviroment provided writing ``` roslaunch assignment_2_2022 assignment1.launch```
-* in the other terminal launch the node developed writing  ``` roslaunch pkg_assignment2 ass2.launch ```.
+	* in one terminal launch the enviroment provided writing ``` roslaunch assignment_2_2022 assignment1.launch```
+	* in the other terminal launch the node developed writing  ``` roslaunch pkg_assignment2 ass2.launch ```.
 The launch file only start nodeA and nodeC because they are the only nodes who have to work all the time. 
 NodeB execute only when called, and to run it in a terminal need to write the command ```rosrun pkg_assignment2 nodeB.py ```
+
+It's necessary to download also the package contained in the repository https://github.com/CarmineD8/assignment_2_2022, that it is inside the src folder of the ROS workspace in a folder called 'assignment_2_2022' otherwise the necessary structure won't be found by ROS.
+
 
 How it works
 -----------------
 
 ### Node A ###
 Node A is the main node and it's in charge of multiple things:
-* Action client node, it takes from input the coordinates the robot has to reach and send them to the Action Server that makes the robot move in order to actually reach them. 
+* Action client node: it takes from input the coordinates the robot has to reach and send them to the Action Server that makes the robot move to actually reach the desired position. 
 * Service server, it send on the topic 'ass/goal' the info about the number of goal reached or canceled using a custom Service Goal when a request is made.
-* Publisher of custom messages (defined as Custom) describing the distance of the robot from the target and the  velocity of the robot on the topic 'ass/pos_vel' each time it get the new position from the message published by odom.
+* Publisher of custom messages (defined as Custom), describing the position and the  velocity of the robot, on the topic 'ass/pos_vel' each time it get the new position of the robot from the message published on the topic '/odom'.
 
 Let's see the pseudo code of the Node A, and the code of the different functions used.
 
@@ -63,7 +66,7 @@ main:
 ```
 #### nodeA_client() ####
 this is the function that start the action client, take the input from keyboard, send it to the action server and then cancel the goal if the user asks to.
-After the coordinates to reach are passed to it by writing some float on the shell when asked, to cancel the goal it look in the terminal in a non blocking way and when 'y' is written it cancel the goal.
+After the coordinates to reach are passed to it by writing some float on the shell when asked, to cancel the goal it looks in the terminal in a non blocking way and when 'y' is written it cancel the goal.
 ``` python 
 def nodeA_client();
   client = actionlib.SimpleActionClient() #start action client
