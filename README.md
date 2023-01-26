@@ -128,10 +128,11 @@ the launch file it's a very helpful tool for a ROS package because it could star
 The launch file written for this assignment it's in charge to set the parameter use by NodeC to set the frequency to print the informations read and then launch NodeA and NodeC.
 It doesn't launch NodeB because it's execution end once it print the result and if it's launched at the beginning there aren't any goal send yet so it will print only 0,0.
 It can launch also the environment of the simulation but the decision to not launch it was takes because the output of the environment doesn't make clearly to see the output of nodeC.
-To make launch also the envoiroment the line
+
+To make launch also the envoiroment need to add to the launch file the line
 ```xml
  <include file="$(find assignment_2_2022)/launch/assignment1.launch" />
 ```
-need to be had to the launch file
+
 
 
