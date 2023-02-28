@@ -1,4 +1,25 @@
 #! /usr/bin/env python
+"""
+.. module:: node A
+	:synopsis: Python module in charge of sending the position the robot has to reach
+.. moduleauthor:: Francesca Corrao
+
+This node implement a controller for the robot in the envoiroment of the package 'assignmnet_2_2022 <https://github.com/CarmineD8/assignment_2_2022>'.
+It ask the user to insert the coordinates the robot has to reach and then giv ethe user to cancel them until the robot hasn't reached them.
+The nodes also publish the robot's velocity and position and it's the server of a service providing information about the number of position reached and cancelled.
+
+Subscriber:
+	/odom
+
+Publisher:
+	ass/pos_vel
+
+Server:
+	ass/goal
+	
+Action Client:
+	/reaching_goal
+"""
 
 import rospy
 import actionlib
@@ -24,27 +45,62 @@ canc=0
 reached=0
 
 def clbk_odom(msg):
+	"""
+	callback function that publish robot velocity and distance from the desired position.
+	It reads robot current position and velocity and compute the distance from the desired position.
+	Then set the correct field of the message to pubblish and publish it.
+	This will be then used by :mod:'nodeC'
+	
+	Args:
+	msg(nav_msgs::Odometry)
+	
+	"""
+
 	global position, desired_position
 	global send
-    # position
+    #read position of the robot from msg
 	position = msg.pose.pose.position
+	#read linear and angular velocity of the robot from msg
 	linear = msg.twist.twist.linear
 	v_angular =msg.twist.twist.angular
-    #print(position_)
+	#set the field of the msg to publish 
 	send.x=position.x-desired_position.x
 	send.y=position.y-desired_position.y
 	send.vel_x=linear.x
 	send.vel_y=linear.y
-	#publish (x,y,vel_x, vel_y)
-	#print(send)
+	#publish msg
 	pub.publish(send)
 
 def clbk_srv(req):
+	"""
+	callback function executed upon request by the service server.
+	The function send as response the number of goal(position) reache by the robot and the number of gaol cancelled.
+	The service and this function are used by :mod:'nodeB'
+	
+	Args:
+	req(GoalRequest): null
+	
+	"""
 	global reached, canc
+	#send the service response
 	return GoalResponse(reached, canc)
 
 	
 def nodeA_client():
+	"""
+	This function initialize a *assignment_2_2022.msg::Planning* Action client and wait for the server.
+	Once a server is found in a while loop the function:
+		*asks the user to insert the cordinate to reach
+		*sends them to the action server 
+		*cancel the goal if the user asks to
+	Once the goal is reached or canceled the instructions above are executed again.
+	
+	The cordinates to reach are of type *geometry_msgs::Point* and only the value of x and y are set by the user. They are taken from input as two different float and then set the corresponding field of the *geometry_msgs::Point* variable.
+	The coordinates to reach are then send to the *assignment_2_2022.msg::Planning* ActionServer as goal 
+	
+	
+	"""
+	
 	#create the action client
 	global target, position, desired_position, dist_precision,send,canc, reached
 	client = actionlib.SimpleActionClient('/reaching_goal', 	assignment_2_2022.msg.PlanningAction)
@@ -100,6 +156,7 @@ def nodeA_client():
 		if(err_pos<dist_precision):
 			reached+=1
 			print("Goal reached !")
+
 
 if __name__ == '__main__':
 	#initialize the rospy node 
