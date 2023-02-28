@@ -26,15 +26,15 @@ This is the documentation for the package develop for the second assignment of t
 Node A module
 ==================================
 .. automodule:: src.nodeA
- :members:
+	:members:
  
 Node B module
 ==================================
 .. automodule:: src.nodeB
- :members:
+	:members:
  
 Node C module
 ==================================
 .. automodule:: src.nodeC
- :members:
+	:members:
  
