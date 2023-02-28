@@ -4,7 +4,7 @@
 	:synopsis: Python module in charge of sending the position the robot has to reach
 .. moduleauthor:: Francesca Corrao
 
-This node implement a controller for the robot in the envoiroment of the package `assignmnet_2_2022 <https://github.com/CarmineD8/assignment_2_2022>`.
+This node implement a controller for the robot in the envoiroment of the package `assignmnet_2_2022 <https://github.com/CarmineD8/assignment_2_2022>` _ .
 It ask the user to insert the coordinates the robot has to reach and then giv ethe user to cancel them until the robot hasn't reached them.
 The nodes also publish the robot's velocity and position and it's the server of a service providing information about the number of position reached and cancelled.
 
@@ -91,14 +91,14 @@ def clbk_srv(req):
 	
 def nodeA_client():
 	"""
-	This function initialize a **assignment_2_2022.msg::Planning** Action client and wait for the server.
+	This function initialize a *assignment_2_2022.msg::Planning* Action client and wait for the server.
 	Once a server is found in a while loop the function:
 	-asks the user to insert the cordinate to reach
 	-sends them to the action server 
 	-cancel the goal if the user asks to
 	Once the goal is reached or canceled the instructions above are executed again.
 		
-	The cordinates to reach are of type **geometry_msgs::Point** and only the value of x and y are set by the user. They are taken from input as two different float and then set the corresponding field of the *geometry_msgs::Point* variable.
+	The cordinates to reach are of type *geometry_msgs::Point* and only the value of x and y are set by the user. They are taken from input as two different float and then set the corresponding field of the *geometry_msgs::Point* variable.
 	The coordinates to reach are then send to the *assignment_2_2022.msg::Planning* ActionServer as goal
 	 	
 	"""
