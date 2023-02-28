@@ -1,6 +1,6 @@
-#! /usr/bin/env python
 """
-.. module:: node A
+.. module:: nodeA
+	:platform: unix
 	:synopsis: Python module in charge of sending the position the robot has to reach
 .. moduleauthor:: Francesca Corrao
 
@@ -19,7 +19,10 @@ Server:
 	
 Action Client:
 	/reaching_goal
+	
 """
+
+#! /usr/bin/env python
 
 import rospy
 import actionlib
@@ -74,7 +77,7 @@ def clbk_odom(msg):
 def clbk_srv(req):
 	"""
 	callback function executed upon request by the service server.
-	The function send as response the number of goal(position) reache by the robot and the number of gaol cancelled.
+	The function send as response the number of goal(position) reached by the robot and the number of goal cancelled.
 	The service and this function are used by :mod:'nodeB'
 	
 	Args:
@@ -90,15 +93,14 @@ def nodeA_client():
 	"""
 	This function initialize a *assignment_2_2022.msg::Planning* Action client and wait for the server.
 	Once a server is found in a while loop the function:
-		*asks the user to insert the cordinate to reach
-		*sends them to the action server 
-		*cancel the goal if the user asks to
+	-asks the user to insert the cordinate to reach
+	-sends them to the action server 
+	-cancel the goal if the user asks to
 	Once the goal is reached or canceled the instructions above are executed again.
-	
+		
 	The cordinates to reach are of type *geometry_msgs::Point* and only the value of x and y are set by the user. They are taken from input as two different float and then set the corresponding field of the *geometry_msgs::Point* variable.
-	The coordinates to reach are then send to the *assignment_2_2022.msg::Planning* ActionServer as goal 
-	
-	
+	The coordinates to reach are then send to the *assignment_2_2022.msg::Planning* ActionServer as goal
+	 	
 	"""
 	
 	#create the action client
@@ -160,14 +162,22 @@ def nodeA_client():
 
 if __name__ == '__main__':
 	#initialize the rospy node 
-	rospy.init_node('nodeA_py')
+	rospy.init_node('nodeA_py') 
+	""" initialize the node
+	"""
 	
 	#subscribe to odom to get the position
 	sub_odom = rospy.Subscriber('/odom', Odometry, clbk_odom)
+	""" sub_odom: Subscriber to \odom to receive messages describing robot position and velocity
+	"""
 	#service server
 	srv = rospy.Service("ass/goal", Goal, clbk_srv)
+	""" srv: Server for the Service Goal on topic ass/goal
+	"""
 	#publisher of custom messages
 	pub=rospy.Publisher("ass/pos_vel", Custom, queue_size=10)
+	""" pub: Publisher for the robot's velocity and distance from target on topic ass/pos_vel
+	"""
 	#star the action client
 	nodeA_client()
 		 
