@@ -4,7 +4,7 @@
 	:synopsis: Python module in charge of sending the position the robot has to reach
 .. moduleauthor:: Francesca Corrao
 
-This node implement a controller for the robot in the envoiroment of the package `assignmnet_2_2022 <https://github.com/CarmineD8/assignment_2_2022>` _ .
+This node implement a controller for the robot in the envoiroment of the package `assignmnet_2_2022 <https://github.com/CarmineD8/assignment_2_2022>`_ .
 It ask the user to insert the coordinates the robot has to reach and then giv ethe user to cancel them until the robot hasn't reached them.
 The nodes also publish the robot's velocity and position and it's the server of a service providing information about the number of position reached and cancelled.
 
