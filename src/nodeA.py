@@ -4,7 +4,7 @@
 	:synopsis: Python module in charge of sending the position the robot has to reach
 .. moduleauthor:: Francesca Corrao
 
-This node implement a controller for the robot in the envoiroment of the package 'assignmnet_2_2022 <https://github.com/CarmineD8/assignment_2_2022>'.
+This node implement a controller for the robot in the envoiroment of the package `assignmnet_2_2022 <https://github.com/CarmineD8/assignment_2_2022>`.
 It ask the user to insert the coordinates the robot has to reach and then giv ethe user to cancel them until the robot hasn't reached them.
 The nodes also publish the robot's velocity and position and it's the server of a service providing information about the number of position reached and cancelled.
 
@@ -52,7 +52,7 @@ def clbk_odom(msg):
 	callback function that publish robot velocity and distance from the desired position.
 	It reads robot current position and velocity and compute the distance from the desired position.
 	Then set the correct field of the message to pubblish and publish it.
-	This will be then used by :mod:'nodeC'
+	This will be then used by :mod:`nodeC`
 	
 	Args:
 	msg(nav_msgs::Odometry)
@@ -78,7 +78,7 @@ def clbk_srv(req):
 	"""
 	callback function executed upon request by the service server.
 	The function send as response the number of goal(position) reached by the robot and the number of goal cancelled.
-	The service and this function are used by :mod:'nodeB'
+	The service and this function are used by :mod:`nodeB`
 	
 	Args:
 	req(GoalRequest): null

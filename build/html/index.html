@@ -93,7 +93,7 @@
 </div>
 <div class="section" id="module-src.nodeA">
 <span id="node-a-module"></span><h1>Node A module<a class="headerlink" href="#module-src.nodeA" title="Permalink to this headline">¶</a></h1>
-<span class="target" id="module-nodeA"></span><p>This node implement a controller for the robot in the envoiroment of the package ‘assignmnet_2_2022 &lt;<a class="reference external" href="https://github.com/CarmineD8/assignment_2_2022">https://github.com/CarmineD8/assignment_2_2022</a>&gt;’.
+<span class="target" id="module-nodeA"></span><p>This node implement a controller for the robot in the envoiroment of the package <cite>assignmnet_2_2022 &lt;https://github.com/CarmineD8/assignment_2_2022&gt;</cite>.
 It ask the user to insert the coordinates the robot has to reach and then giv ethe user to cancel them until the robot hasn’t reached them.
 The nodes also publish the robot’s velocity and position and it’s the server of a service providing information about the number of position reached and cancelled.</p>
 <dl class="docutils">
@@ -112,7 +112,7 @@ The nodes also publish the robot’s velocity and position and it’s the server
 <dd><p>callback function that publish robot velocity and distance from the desired position.
 It reads robot current position and velocity and compute the distance from the desired position.
 Then set the correct field of the message to pubblish and publish it.
-This will be then used by :mod:’nodeC’</p>
+This will be then used by <a class="reference internal" href="#module-nodeC" title="nodeC: Python module in charge of print robot current velocity and distance from target whit a certain frequency."><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodeC</span></code></a></p>
 <p>Args:
 msg(nav_msgs::Odometry)</p>
 </dd></dl>
@@ -122,7 +122,7 @@ msg(nav_msgs::Odometry)</p>
 <code class="descclassname">src.nodeA.</code><code class="descname">clbk_srv</code><span class="sig-paren">(</span><em>req</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/nodeA.html#clbk_srv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.nodeA.clbk_srv" title="Permalink to this definition">¶</a></dt>
 <dd><p>callback function executed upon request by the service server.
 The function send as response the number of goal(position) reached by the robot and the number of goal cancelled.
-The service and this function are used by :mod:’nodeB’</p>
+The service and this function are used by <a class="reference internal" href="#module-nodeB" title="nodeB: Python module in charge of print number of goal reached and cancelled"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodeB</span></code></a></p>
 <p>Args:
 req(GoalRequest): null</p>
 </dd></dl>

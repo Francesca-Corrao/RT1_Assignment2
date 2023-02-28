@@ -71,7 +71,7 @@
 <span class="sd">	:synopsis: Python module in charge of sending the position the robot has to reach</span>
 <span class="sd">.. moduleauthor:: Francesca Corrao</span>
 
-<span class="sd">This node implement a controller for the robot in the envoiroment of the package &#39;assignmnet_2_2022 &lt;https://github.com/CarmineD8/assignment_2_2022&gt;&#39;.</span>
+<span class="sd">This node implement a controller for the robot in the envoiroment of the package `assignmnet_2_2022 &lt;https://github.com/CarmineD8/assignment_2_2022&gt;`.</span>
 <span class="sd">It ask the user to insert the coordinates the robot has to reach and then giv ethe user to cancel them until the robot hasn&#39;t reached them.</span>
 <span class="sd">The nodes also publish the robot&#39;s velocity and position and it&#39;s the server of a service providing information about the number of position reached and cancelled.</span>
 
@@ -119,7 +119,7 @@
 <span class="sd">	callback function that publish robot velocity and distance from the desired position.</span>
 <span class="sd">	It reads robot current position and velocity and compute the distance from the desired position.</span>
 <span class="sd">	Then set the correct field of the message to pubblish and publish it.</span>
-<span class="sd">	This will be then used by :mod:&#39;nodeC&#39;</span>
+<span class="sd">	This will be then used by :mod:`nodeC`</span>
 <span class="sd">	</span>
 <span class="sd">	Args:</span>
 <span class="sd">	msg(nav_msgs::Odometry)</span>
@@ -145,7 +145,7 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	callback function executed upon request by the service server.</span>
 <span class="sd">	The function send as response the number of goal(position) reached by the robot and the number of goal cancelled.</span>
-<span class="sd">	The service and this function are used by :mod:&#39;nodeB&#39;</span>
+<span class="sd">	The service and this function are used by :mod:`nodeB`</span>
 <span class="sd">	</span>
 <span class="sd">	Args:</span>
 <span class="sd">	req(GoalRequest): null</span>
