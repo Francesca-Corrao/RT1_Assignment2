@@ -130,13 +130,13 @@ req(GoalRequest): null</p>
 <dl class="function">
 <dt id="src.nodeA.nodeA_client">
 <code class="descclassname">src.nodeA.</code><code class="descname">nodeA_client</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/nodeA.html#nodeA_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.nodeA.nodeA_client" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function initialize a <em>assignment_2_2022.msg::Planning</em> Action client and wait for the server.
+<dd><p>This function initialize a <strong>assignment_2_2022.msg::Planning</strong> Action client and wait for the server.
 Once a server is found in a while loop the function:
 -asks the user to insert the cordinate to reach
 -sends them to the action server
 -cancel the goal if the user asks to
 Once the goal is reached or canceled the instructions above are executed again.</p>
-<p>The cordinates to reach are of type <em>geometry_msgs::Point</em> and only the value of x and y are set by the user. They are taken from input as two different float and then set the corresponding field of the <em>geometry_msgs::Point</em> variable.
+<p>The cordinates to reach are of type <strong>geometry_msgs::Point</strong> and only the value of x and y are set by the user. They are taken from input as two different float and then set the corresponding field of the <em>geometry_msgs::Point</em> variable.
 The coordinates to reach are then send to the <em>assignment_2_2022.msg::Planning</em> ActionServer as goal</p>
 </dd></dl>
 

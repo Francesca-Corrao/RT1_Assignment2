@@ -91,14 +91,14 @@ def clbk_srv(req):
 	
 def nodeA_client():
 	"""
-	This function initialize a *assignment_2_2022.msg::Planning* Action client and wait for the server.
+	This function initialize a **assignment_2_2022.msg::Planning** Action client and wait for the server.
 	Once a server is found in a while loop the function:
 	-asks the user to insert the cordinate to reach
 	-sends them to the action server 
 	-cancel the goal if the user asks to
 	Once the goal is reached or canceled the instructions above are executed again.
 		
-	The cordinates to reach are of type *geometry_msgs::Point* and only the value of x and y are set by the user. They are taken from input as two different float and then set the corresponding field of the *geometry_msgs::Point* variable.
+	The cordinates to reach are of type **geometry_msgs::Point** and only the value of x and y are set by the user. They are taken from input as two different float and then set the corresponding field of the *geometry_msgs::Point* variable.
 	The coordinates to reach are then send to the *assignment_2_2022.msg::Planning* ActionServer as goal
 	 	
 	"""
