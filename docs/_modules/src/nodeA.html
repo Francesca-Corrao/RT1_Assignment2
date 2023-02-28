@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.nodeA &mdash; RT1_assignment2 1.0 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            RT1_assignment2
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">RT1_assignment2</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">src.nodeA</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for src.nodeA</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module:: nodeA</span>
+<span class="sd">	:platform: unix</span>
+<span class="sd">	:synopsis: Python module in charge of sending the position the robot has to reach</span>
+<span class="sd">.. moduleauthor:: Francesca Corrao</span>
+
+<span class="sd">This node implement a controller for the robot in the envoiroment of the package &#39;assignmnet_2_2022 &lt;https://github.com/CarmineD8/assignment_2_2022&gt;&#39;.</span>
+<span class="sd">It ask the user to insert the coordinates the robot has to reach and then giv ethe user to cancel them until the robot hasn&#39;t reached them.</span>
+<span class="sd">The nodes also publish the robot&#39;s velocity and position and it&#39;s the server of a service providing information about the number of position reached and cancelled.</span>
+
+<span class="sd">Subscriber:</span>
+<span class="sd">	/odom</span>
+
+<span class="sd">Publisher:</span>
+<span class="sd">	ass/pos_vel</span>
+
+<span class="sd">Server:</span>
+<span class="sd">	ass/goal</span>
+<span class="sd">	</span>
+<span class="sd">Action Client:</span>
+<span class="sd">	/reaching_goal</span>
+<span class="sd">	</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">#! /usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">rospy</span>
+<span class="kn">import</span> <span class="nn">actionlib</span>
+<span class="kn">import</span> <span class="nn">actionlib.msg</span>
+<span class="kn">import</span> <span class="nn">assignment_2_2022.msg</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">select</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">geometry_msgs.msg</span> <span class="kn">import</span>  <span class="n">Pose</span><span class="p">,</span> <span class="n">Point</span><span class="p">,</span> <span class="n">PoseStamped</span><span class="p">,</span> <span class="n">Vector3</span>
+<span class="kn">from</span> <span class="nn">nav_msgs.msg</span> <span class="kn">import</span> <span class="n">Odometry</span>
+<span class="kn">from</span> <span class="nn">pkg_assignment2.msg</span> <span class="kn">import</span> <span class="n">Custom</span>
+<span class="kn">from</span> <span class="nn">pkg_assignment2.srv</span> <span class="kn">import</span> <span class="n">Goal</span><span class="p">,</span> <span class="n">GoalResponse</span>
+
+<span class="n">target</span> <span class="o">=</span> <span class="n">PoseStamped</span><span class="p">()</span>
+<span class="n">position</span> <span class="o">=</span> <span class="n">Point</span><span class="p">()</span>
+<span class="n">desired_position</span> <span class="o">=</span> <span class="n">Point</span><span class="p">()</span>
+<span class="n">dist_precision</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">v_linear</span> <span class="o">=</span><span class="n">Vector3</span><span class="p">()</span>
+<span class="n">v_angular</span> <span class="o">=</span> <span class="n">Vector3</span><span class="p">()</span>
+<span class="n">send</span><span class="o">=</span><span class="n">Custom</span><span class="p">()</span>
+<span class="n">canc</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">reached</span><span class="o">=</span><span class="mi">0</span>
+
+<div class="viewcode-block" id="clbk_odom"><a class="viewcode-back" href="../../index.html#src.nodeA.clbk_odom">[docs]</a><span class="k">def</span> <span class="nf">clbk_odom</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	callback function that publish robot velocity and distance from the desired position.</span>
+<span class="sd">	It reads robot current position and velocity and compute the distance from the desired position.</span>
+<span class="sd">	Then set the correct field of the message to pubblish and publish it.</span>
+<span class="sd">	This will be then used by :mod:&#39;nodeC&#39;</span>
+<span class="sd">	</span>
+<span class="sd">	Args:</span>
+<span class="sd">	msg(nav_msgs::Odometry)</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">global</span> <span class="n">position</span><span class="p">,</span> <span class="n">desired_position</span>
+	<span class="k">global</span> <span class="n">send</span>
+    <span class="c1">#read position of the robot from msg</span>
+	<span class="n">position</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">position</span>
+	<span class="c1">#read linear and angular velocity of the robot from msg</span>
+	<span class="n">linear</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">twist</span><span class="o">.</span><span class="n">twist</span><span class="o">.</span><span class="n">linear</span>
+	<span class="n">v_angular</span> <span class="o">=</span><span class="n">msg</span><span class="o">.</span><span class="n">twist</span><span class="o">.</span><span class="n">twist</span><span class="o">.</span><span class="n">angular</span>
+	<span class="c1">#set the field of the msg to publish </span>
+	<span class="n">send</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="n">position</span><span class="o">.</span><span class="n">x</span><span class="o">-</span><span class="n">desired_position</span><span class="o">.</span><span class="n">x</span>
+	<span class="n">send</span><span class="o">.</span><span class="n">y</span><span class="o">=</span><span class="n">position</span><span class="o">.</span><span class="n">y</span><span class="o">-</span><span class="n">desired_position</span><span class="o">.</span><span class="n">y</span>
+	<span class="n">send</span><span class="o">.</span><span class="n">vel_x</span><span class="o">=</span><span class="n">linear</span><span class="o">.</span><span class="n">x</span>
+	<span class="n">send</span><span class="o">.</span><span class="n">vel_y</span><span class="o">=</span><span class="n">linear</span><span class="o">.</span><span class="n">y</span>
+	<span class="c1">#publish msg</span>
+	<span class="n">pub</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">send</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="clbk_srv"><a class="viewcode-back" href="../../index.html#src.nodeA.clbk_srv">[docs]</a><span class="k">def</span> <span class="nf">clbk_srv</span><span class="p">(</span><span class="n">req</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	callback function executed upon request by the service server.</span>
+<span class="sd">	The function send as response the number of goal(position) reached by the robot and the number of goal cancelled.</span>
+<span class="sd">	The service and this function are used by :mod:&#39;nodeB&#39;</span>
+<span class="sd">	</span>
+<span class="sd">	Args:</span>
+<span class="sd">	req(GoalRequest): null</span>
+<span class="sd">	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">global</span> <span class="n">reached</span><span class="p">,</span> <span class="n">canc</span>
+	<span class="c1">#send the service response</span>
+	<span class="k">return</span> <span class="n">GoalResponse</span><span class="p">(</span><span class="n">reached</span><span class="p">,</span> <span class="n">canc</span><span class="p">)</span></div>
+
+	
+<div class="viewcode-block" id="nodeA_client"><a class="viewcode-back" href="../../index.html#src.nodeA.nodeA_client">[docs]</a><span class="k">def</span> <span class="nf">nodeA_client</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This function initialize a *assignment_2_2022.msg::Planning* Action client and wait for the server.</span>
+<span class="sd">	Once a server is found in a while loop the function:</span>
+<span class="sd">	-asks the user to insert the cordinate to reach</span>
+<span class="sd">	-sends them to the action server </span>
+<span class="sd">	-cancel the goal if the user asks to</span>
+<span class="sd">	Once the goal is reached or canceled the instructions above are executed again.</span>
+<span class="sd">		</span>
+<span class="sd">	The cordinates to reach are of type *geometry_msgs::Point* and only the value of x and y are set by the user. They are taken from input as two different float and then set the corresponding field of the *geometry_msgs::Point* variable.</span>
+<span class="sd">	The coordinates to reach are then send to the *assignment_2_2022.msg::Planning* ActionServer as goal</span>
+<span class="sd">	 	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	
+	<span class="c1">#create the action client</span>
+	<span class="k">global</span> <span class="n">target</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">desired_position</span><span class="p">,</span> <span class="n">dist_precision</span><span class="p">,</span><span class="n">send</span><span class="p">,</span><span class="n">canc</span><span class="p">,</span> <span class="n">reached</span>
+	<span class="n">client</span> <span class="o">=</span> <span class="n">actionlib</span><span class="o">.</span><span class="n">SimpleActionClient</span><span class="p">(</span><span class="s1">&#39;/reaching_goal&#39;</span><span class="p">,</span> 	<span class="n">assignment_2_2022</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">PlanningAction</span><span class="p">)</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Node A&quot;</span><span class="p">)</span>
+	<span class="n">client</span><span class="o">.</span><span class="n">wait_for_server</span><span class="p">()</span>
+	<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;server found&quot;</span><span class="p">)</span>
+	
+	<span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Taking new coordinates to reach (x,y)&quot;</span><span class="p">)</span>
+		<span class="c1">#take input from keyboard(x,y)</span>
+		<span class="n">val</span><span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter the value(integer) of x to reach:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+		<span class="n">x</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+		<span class="n">val</span><span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter the value(integer) of y to reach:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+		<span class="n">y</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">);</span>
+		
+		<span class="c1">#update the target pose</span>
+		<span class="n">target</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="n">x</span>
+		<span class="n">target</span><span class="o">.</span><span class="n">pose</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">y</span><span class="o">=</span><span class="n">y</span>
+		
+		<span class="n">desired_position</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="n">x</span>
+		<span class="n">desired_position</span><span class="o">.</span><span class="n">y</span><span class="o">=</span><span class="n">y</span>
+		<span class="c1">#set the pose to be the goal</span>
+		<span class="n">goal</span> <span class="o">=</span> <span class="n">assignment_2_2022</span><span class="o">.</span><span class="n">msg</span><span class="o">.</span><span class="n">PlanningGoal</span><span class="p">(</span><span class="n">target_pose</span> <span class="o">=</span> <span class="n">target</span><span class="p">)</span>
+	
+		<span class="c1">#send the goal</span>
+		<span class="n">client</span><span class="o">.</span><span class="n">send_goal</span><span class="p">(</span><span class="n">goal</span><span class="p">)</span>
+		
+		<span class="n">err_pos</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">pow</span><span class="p">(</span><span class="n">desired_position</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">position</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span>
+                        <span class="nb">pow</span><span class="p">(</span><span class="n">desired_position</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">position</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+		<span class="c1">#while target isn&#39;t reach</span>
+		<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;When you want to cancel the goal press y on keyboard&quot;</span><span class="p">)</span>
+		<span class="k">while</span><span class="p">(</span><span class="n">err_pos</span><span class="o">&gt;</span><span class="n">dist_precision</span><span class="p">):</span>
+			<span class="n">put</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="p">],[],[],</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">err_pos</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">pow</span><span class="p">(</span><span class="n">desired_position</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">position</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span>
+                        <span class="nb">pow</span><span class="p">(</span><span class="n">desired_position</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">position</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+			<span class="k">if</span> <span class="n">err_pos</span><span class="o">&lt;</span><span class="n">dist_precision</span> <span class="p">:</span>
+				<span class="k">break</span>
+			<span class="k">if</span> <span class="n">put</span><span class="p">:</span> 
+				<span class="n">v</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+
+				<span class="k">if</span> <span class="n">v</span><span class="o">==</span><span class="s1">&#39;y&#39;</span><span class="p">:</span>
+				<span class="c1">#cancel the goal</span>
+					<span class="n">client</span><span class="o">.</span><span class="n">cancel_goal</span><span class="p">()</span>
+					<span class="n">canc</span><span class="o">+=</span><span class="mi">1</span>
+					<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;goal cancelled&quot;</span><span class="p">)</span>
+					<span class="k">break</span>
+				<span class="k">else</span><span class="p">:</span>
+				<span class="c1">#don&#39;t cancel the goal</span>
+					<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;invalid input-reaching the goal&quot;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">err_pos</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">pow</span><span class="p">(</span><span class="n">desired_position</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">position</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span>
+                        <span class="nb">pow</span><span class="p">(</span><span class="n">desired_position</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">position</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">err_pos</span><span class="o">&lt;</span><span class="n">dist_precision</span><span class="p">):</span>
+			<span class="n">reached</span><span class="o">+=</span><span class="mi">1</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Goal reached !&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+	<span class="c1">#initialize the rospy node </span>
+	<span class="n">rospy</span><span class="o">.</span><span class="n">init_node</span><span class="p">(</span><span class="s1">&#39;nodeA_py&#39;</span><span class="p">)</span> 
+	<span class="sd">&quot;&quot;&quot; initialize the node</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	
+	<span class="c1">#subscribe to odom to get the position</span>
+	<span class="n">sub_odom</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Subscriber</span><span class="p">(</span><span class="s1">&#39;/odom&#39;</span><span class="p">,</span> <span class="n">Odometry</span><span class="p">,</span> <span class="n">clbk_odom</span><span class="p">)</span>
+	<span class="sd">&quot;&quot;&quot; sub_odom: Subscriber to \odom to receive messages describing robot position and velocity</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1">#service server</span>
+	<span class="n">srv</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span><span class="s2">&quot;ass/goal&quot;</span><span class="p">,</span> <span class="n">Goal</span><span class="p">,</span> <span class="n">clbk_srv</span><span class="p">)</span>
+	<span class="sd">&quot;&quot;&quot; srv: Server for the Service Goal on topic ass/goal</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1">#publisher of custom messages</span>
+	<span class="n">pub</span><span class="o">=</span><span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span><span class="s2">&quot;ass/pos_vel&quot;</span><span class="p">,</span> <span class="n">Custom</span><span class="p">,</span> <span class="n">queue_size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+	<span class="sd">&quot;&quot;&quot; pub: Publisher for the robot&#39;s velocity and distance from target on topic ass/pos_vel</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1">#star the action client</span>
+	<span class="n">nodeA_client</span><span class="p">()</span>
+		 
+	 
+	
+	
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Francesca Corrao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
