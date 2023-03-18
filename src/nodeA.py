@@ -5,7 +5,8 @@
 .. moduleauthor:: Francesca Corrao
 
 This node implement a controller for the robot in the envoiroment of the package `assignmnet_2_2022 <https://github.com/CarmineD8/assignment_2_2022>`_ .
-It ask the user to insert the coordinates the robot has to reach and then giv ethe user to cancel them until the robot hasn't reached them.
+It ask the user to insert the coordinates the robot has to reach and then give the user the possibility to cancel them until the robot hasn't reached the desired position.
+
 The nodes also publish the robot's velocity and position and it's the server of a service providing information about the number of position reached and cancelled.
 
 Subscriber:
@@ -49,13 +50,16 @@ reached=0
 
 def clbk_odom(msg):
 	"""
-	callback function that publish robot velocity and distance from the desired position.
+	callback function that publish robot velocity and distance from the desired position.\
 	It reads robot current position and velocity and compute the distance from the desired position.
-	Then set the correct field of the message to pubblish and publish it.
+	Then set the correct field of the message to pubblish and publish it on the topic 'ass/pos_vel'.
 	This will be then used by :mod:`nodeC`
 	
 	Args:
-	msg(nav_msgs::Odometry)
+	msg(nav_msgs::Odometry): message published on the '/odom' topic describing robot current position and velocities.
+	
+	Returns:
+	None
 	
 	"""
 
@@ -76,12 +80,15 @@ def clbk_odom(msg):
 
 def clbk_srv(req):
 	"""
-	callback function executed upon request by the service server.
+	callback function executed upon request by the service server.\
 	The function send as response the number of goal(position) reached by the robot and the number of goal cancelled.
 	The service and this function are used by :mod:`nodeB`
 	
 	Args:
 	req(GoalRequest): null
+	
+	Returns:
+	response(GalResponse): number of goal reached and cancelled
 	
 	"""
 	global reached, canc
@@ -93,13 +100,24 @@ def nodeA_client():
 	"""
 	This function initialize a *assignment_2_2022.msg::Planning* Action client and wait for the server.
 	Once a server is found in a while loop the function:
-	-asks the user to insert the cordinate to reach
-	-sends them to the action server 
-	-cancel the goal if the user asks to
+	
+		-asks the user to insert the cordinate to reach
+	
+		-sends them to the action server 
+	
+		-cancel the goal if the user asks to
+		
 	Once the goal is reached or canceled the instructions above are executed again.
 		
-	The cordinates to reach are of type *geometry_msgs::Point* and only the value of x and y are set by the user. They are taken from input as two different float and then set the corresponding field of the *geometry_msgs::Point* variable.
-	The coordinates to reach are then send to the *assignment_2_2022.msg::Planning* ActionServer as goal
+	The cordinates to reach are of type *geometry_msgs::Point* and only the value of x and y are set by the user.
+	They are taken from input as two different float and then set the corresponding field of a *geometry_msgs::Point* variable.
+	The coordinates to reach are then send to the *assignment_2_2022.msg::Planning* ActionServer as goal.
+	
+	Args:
+	none
+	
+	Returns:
+	none
 	 	
 	"""
 	

@@ -72,7 +72,8 @@
 <span class="sd">.. moduleauthor:: Francesca Corrao</span>
 
 <span class="sd">This node implement a controller for the robot in the envoiroment of the package `assignmnet_2_2022 &lt;https://github.com/CarmineD8/assignment_2_2022&gt;`_ .</span>
-<span class="sd">It ask the user to insert the coordinates the robot has to reach and then giv ethe user to cancel them until the robot hasn&#39;t reached them.</span>
+<span class="sd">It ask the user to insert the coordinates the robot has to reach and then give the user the possibility to cancel them until the robot hasn&#39;t reached the desired position.</span>
+
 <span class="sd">The nodes also publish the robot&#39;s velocity and position and it&#39;s the server of a service providing information about the number of position reached and cancelled.</span>
 
 <span class="sd">Subscriber:</span>
@@ -116,13 +117,16 @@
 
 <div class="viewcode-block" id="clbk_odom"><a class="viewcode-back" href="../../index.html#src.nodeA.clbk_odom">[docs]</a><span class="k">def</span> <span class="nf">clbk_odom</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	callback function that publish robot velocity and distance from the desired position.</span>
+<span class="sd">	callback function that publish robot velocity and distance from the desired position.\</span>
 <span class="sd">	It reads robot current position and velocity and compute the distance from the desired position.</span>
-<span class="sd">	Then set the correct field of the message to pubblish and publish it.</span>
+<span class="sd">	Then set the correct field of the message to pubblish and publish it on the topic &#39;ass/pos_vel&#39;.</span>
 <span class="sd">	This will be then used by :mod:`nodeC`</span>
 <span class="sd">	</span>
 <span class="sd">	Args:</span>
-<span class="sd">	msg(nav_msgs::Odometry)</span>
+<span class="sd">	msg(nav_msgs::Odometry): message published on the &#39;/odom&#39; topic describing robot current position and velocities.</span>
+<span class="sd">	</span>
+<span class="sd">	Returns:</span>
+<span class="sd">	None</span>
 <span class="sd">	</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 
@@ -143,12 +147,15 @@
 
 <div class="viewcode-block" id="clbk_srv"><a class="viewcode-back" href="../../index.html#src.nodeA.clbk_srv">[docs]</a><span class="k">def</span> <span class="nf">clbk_srv</span><span class="p">(</span><span class="n">req</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	callback function executed upon request by the service server.</span>
+<span class="sd">	callback function executed upon request by the service server.\</span>
 <span class="sd">	The function send as response the number of goal(position) reached by the robot and the number of goal cancelled.</span>
 <span class="sd">	The service and this function are used by :mod:`nodeB`</span>
 <span class="sd">	</span>
 <span class="sd">	Args:</span>
 <span class="sd">	req(GoalRequest): null</span>
+<span class="sd">	</span>
+<span class="sd">	Returns:</span>
+<span class="sd">	response(GalResponse): number of goal reached and cancelled</span>
 <span class="sd">	</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">global</span> <span class="n">reached</span><span class="p">,</span> <span class="n">canc</span>
@@ -160,13 +167,24 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	This function initialize a *assignment_2_2022.msg::Planning* Action client and wait for the server.</span>
 <span class="sd">	Once a server is found in a while loop the function:</span>
-<span class="sd">	-asks the user to insert the cordinate to reach</span>
-<span class="sd">	-sends them to the action server </span>
-<span class="sd">	-cancel the goal if the user asks to</span>
+<span class="sd">	</span>
+<span class="sd">		-asks the user to insert the cordinate to reach</span>
+<span class="sd">	</span>
+<span class="sd">		-sends them to the action server </span>
+<span class="sd">	</span>
+<span class="sd">		-cancel the goal if the user asks to</span>
+<span class="sd">		</span>
 <span class="sd">	Once the goal is reached or canceled the instructions above are executed again.</span>
 <span class="sd">		</span>
-<span class="sd">	The cordinates to reach are of type *geometry_msgs::Point* and only the value of x and y are set by the user. They are taken from input as two different float and then set the corresponding field of the *geometry_msgs::Point* variable.</span>
-<span class="sd">	The coordinates to reach are then send to the *assignment_2_2022.msg::Planning* ActionServer as goal</span>
+<span class="sd">	The cordinates to reach are of type *geometry_msgs::Point* and only the value of x and y are set by the user.</span>
+<span class="sd">	They are taken from input as two different float and then set the corresponding field of a *geometry_msgs::Point* variable.</span>
+<span class="sd">	The coordinates to reach are then send to the *assignment_2_2022.msg::Planning* ActionServer as goal.</span>
+<span class="sd">	</span>
+<span class="sd">	Args:</span>
+<span class="sd">	none</span>
+<span class="sd">	</span>
+<span class="sd">	Returns:</span>
+<span class="sd">	none</span>
 <span class="sd">	 	</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	

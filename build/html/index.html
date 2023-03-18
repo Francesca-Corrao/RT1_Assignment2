@@ -88,14 +88,14 @@
 </ul>
 <div class="section" id="rt1-assignment2-documentation">
 <h2>RT1_assignment2 Documentation<a class="headerlink" href="#rt1-assignment2-documentation" title="Permalink to this headline">¶</a></h2>
-<p>This is the documentation for the package develop for the second assignment of the Research Track 1 class.</p>
+<p>This is the documentation for the package develop for the second assignment of the Research Track 1 class. The package provide three different node modules, a launch file, a message structure and a service structure.</p>
 </div>
 </div>
 <div class="section" id="module-src.nodeA">
 <span id="node-a-module"></span><h1>Node A module<a class="headerlink" href="#module-src.nodeA" title="Permalink to this headline">¶</a></h1>
 <span class="target" id="module-nodeA"></span><p>This node implement a controller for the robot in the envoiroment of the package <a class="reference external" href="https://github.com/CarmineD8/assignment_2_2022">assignmnet_2_2022</a> .
-It ask the user to insert the coordinates the robot has to reach and then giv ethe user to cancel them until the robot hasn’t reached them.
-The nodes also publish the robot’s velocity and position and it’s the server of a service providing information about the number of position reached and cancelled.</p>
+It ask the user to insert the coordinates the robot has to reach and then give the user the possibility to cancel them until the robot hasn’t reached the desired position.</p>
+<p>The nodes also publish the robot’s velocity and position and it’s the server of a service providing information about the number of position reached and cancelled.</p>
 <dl class="docutils">
 <dt>Subscriber:</dt>
 <dd>/odom</dd>
@@ -109,41 +109,50 @@ The nodes also publish the robot’s velocity and position and it’s the server
 <dl class="function">
 <dt id="src.nodeA.clbk_odom">
 <code class="descclassname">src.nodeA.</code><code class="descname">clbk_odom</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/nodeA.html#clbk_odom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.nodeA.clbk_odom" title="Permalink to this definition">¶</a></dt>
-<dd><p>callback function that publish robot velocity and distance from the desired position.
-It reads robot current position and velocity and compute the distance from the desired position.
-Then set the correct field of the message to pubblish and publish it.
+<dd><p>callback function that publish robot velocity and distance from the desired position.   It reads robot current position and velocity and compute the distance from the desired position.
+Then set the correct field of the message to pubblish and publish it on the topic ‘ass/pos_vel’.
 This will be then used by <a class="reference internal" href="#module-nodeC" title="nodeC: Python module in charge of print robot current velocity and distance from target whit a certain frequency."><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodeC</span></code></a></p>
 <p>Args:
-msg(nav_msgs::Odometry)</p>
+msg(nav_msgs::Odometry): message published on the ‘/odom’ topic describing robot current position and velocities.</p>
+<p>Returns:
+None</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="src.nodeA.clbk_srv">
 <code class="descclassname">src.nodeA.</code><code class="descname">clbk_srv</code><span class="sig-paren">(</span><em>req</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/nodeA.html#clbk_srv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.nodeA.clbk_srv" title="Permalink to this definition">¶</a></dt>
-<dd><p>callback function executed upon request by the service server.
-The function send as response the number of goal(position) reached by the robot and the number of goal cancelled.
+<dd><p>callback function executed upon request by the service server.  The function send as response the number of goal(position) reached by the robot and the number of goal cancelled.
 The service and this function are used by <a class="reference internal" href="#module-nodeB" title="nodeB: Python module in charge of print number of goal reached and cancelled"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodeB</span></code></a></p>
 <p>Args:
 req(GoalRequest): null</p>
+<p>Returns:
+response(GalResponse): number of goal reached and cancelled</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="src.nodeA.nodeA_client">
 <code class="descclassname">src.nodeA.</code><code class="descname">nodeA_client</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/nodeA.html#nodeA_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.nodeA.nodeA_client" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function initialize a <em>assignment_2_2022.msg::Planning</em> Action client and wait for the server.
-Once a server is found in a while loop the function:
--asks the user to insert the cordinate to reach
--sends them to the action server
--cancel the goal if the user asks to
-Once the goal is reached or canceled the instructions above are executed again.</p>
-<p>The cordinates to reach are of type <em>geometry_msgs::Point</em> and only the value of x and y are set by the user. They are taken from input as two different float and then set the corresponding field of the <em>geometry_msgs::Point</em> variable.
-The coordinates to reach are then send to the <em>assignment_2_2022.msg::Planning</em> ActionServer as goal</p>
+Once a server is found in a while loop the function:</p>
+<blockquote>
+<div><p>-asks the user to insert the cordinate to reach</p>
+<p>-sends them to the action server</p>
+<p>-cancel the goal if the user asks to</p>
+</div></blockquote>
+<p>Once the goal is reached or canceled the instructions above are executed again.</p>
+<p>The cordinates to reach are of type <em>geometry_msgs::Point</em> and only the value of x and y are set by the user.
+They are taken from input as two different float and then set the corresponding field of a <em>geometry_msgs::Point</em> variable.
+The coordinates to reach are then send to the <em>assignment_2_2022.msg::Planning</em> ActionServer as goal.</p>
+<p>Args:
+none</p>
+<p>Returns:
+none</p>
 </dd></dl>
 
 </div>
 <div class="section" id="module-src.nodeB">
 <span id="node-b-module"></span><h1>Node B module<a class="headerlink" href="#module-src.nodeB" title="Permalink to this headline">¶</a></h1>
-<span class="target" id="module-nodeB"></span><p>This node send a request to the <em>Goal</em> Service and print it’s response, whcih contain the number of goal reached by the robot and the number of goal the user cancel.</p>
+<span class="target" id="module-nodeB"></span><p>This node sends a request to the <em>Goal</em> Service and prints it’s response, which contain the number of goal reached by the robot and the number of goal the user cancel.</p>
 <dl class="docutils">
 <dt>Client of:</dt>
 <dd>ass/goal</dd>
@@ -151,7 +160,7 @@ The coordinates to reach are then send to the <em>assignment_2_2022.msg::Plannin
 </div>
 <div class="section" id="module-src.nodeC">
 <span id="node-c-module"></span><h1>Node C module<a class="headerlink" href="#module-src.nodeC" title="Permalink to this headline">¶</a></h1>
-<span class="target" id="module-nodeC"></span><p>This node subscribes to the messages <em>Custom</em> published by :mod:’nodeA’ and update the value of robot current velocity and distance from target. Then print them with a frequency which is set in the ros parameter <em>my_freq</em>.</p>
+<span class="target" id="module-nodeC"></span><p>This node subscribes to the messages <em>Custom</em> published by <a class="reference internal" href="#module-nodeA" title="nodeA: Python module in charge of sending the position the robot has to reach (unix)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nodeA</span></code></a> and updates the value of robot current velocity and distance from target. Then print them with a frequency which is set in the ros parameter <em>my_freq</em>.</p>
 <dl class="docutils">
 <dt>Subscriber:</dt>
 <dd>ass/pos_vel</dd>
@@ -161,7 +170,8 @@ The coordinates to reach are then send to the <em>assignment_2_2022.msg::Plannin
 <dl class="function">
 <dt id="src.nodeC.clbk">
 <code class="descclassname">src.nodeC.</code><code class="descname">clbk</code><span class="sig-paren">(</span><em>msg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/nodeC.html#clbk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.nodeC.clbk" title="Permalink to this definition">¶</a></dt>
-<dd><p>Callback function executed each time a new message of type <em>Custom</em> is publish on the topic ass/pos_vel, it just update the value of the node about robot current velocity and distance from target.</p>
+<dd><p>Callback function executed each time a new message of type <em>Custom</em> is publish on the topic ‘ass/pos_vel’.
+The function updates the value of the node variables containg information about robot current velocity and distance from target.</p>
 </dd></dl>
 
 </div>

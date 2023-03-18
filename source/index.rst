@@ -21,7 +21,7 @@ Indices and tables
 
 RT1_assignment2 Documentation
 ****************************************
-This is the documentation for the package develop for the second assignment of the Research Track 1 class.
+This is the documentation for the package develop for the second assignment of the Research Track 1 class. The package provide three different node modules, a launch file, a message structure and a service structure. 
 
 Node A module
 ==================================

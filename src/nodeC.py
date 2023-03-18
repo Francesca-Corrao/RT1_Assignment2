@@ -4,7 +4,7 @@
 	:synopsis: Python module in charge of print robot current velocity and distance from target whit a certain frequency.
 .. moduleauthor:: Francesca Corrao
 
-This node subscribes to the messages *Custom* published by :mod:'nodeA' and update the value of robot current velocity and distance from target. Then print them with a frequency which is set in the ros parameter *my_freq*.
+This node subscribes to the messages *Custom* published by :mod:`nodeA` and updates the value of robot current velocity and distance from target. Then print them with a frequency which is set in the ros parameter *my_freq*.
 
 Subscriber:
 	ass/pos_vel
@@ -22,7 +22,8 @@ global x,y,vel_x, vel_y
 
 def clbk(msg):
 	"""
-	Callback function executed each time a new message of type *Custom* is publish on the topic ass/pos_vel, it just update the value of the node about robot current velocity and distance from target.
+	Callback function executed each time a new message of type *Custom* is publish on the topic 'ass/pos_vel'.
+	The function updates the value of the node variables containg information about robot current velocity and distance from target.
 
 	"""
 

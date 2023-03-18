@@ -4,7 +4,7 @@
 	:synopsis: Python module in charge of print number of goal reached and cancelled
 .. moduleauthor:: Francesca Corrao
 
-This node send a request to the *Goal* Service and print it's response, whcih contain the number of goal reached by the robot and the number of goal the user cancel.
+This node sends a request to the *Goal* Service and prints it's response, which contain the number of goal reached by the robot and the number of goal the user cancel.
 
 Client of:
 	ass/goal
