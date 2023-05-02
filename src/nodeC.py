@@ -4,7 +4,7 @@
 	:synopsis: Python module in charge of print robot current velocity and distance from target whit a certain frequency.
 .. moduleauthor:: Francesca Corrao
 
-This node subscribes to the messages *Custom* published by :mod:`nodeA` and updates the value of robot current velocity and distance from target. Then print them with a frequency which is set in the ros parameter *my_freq*.
+This node subscribes to the messages *Custom* published by :mod:`nodeA` and updates the value of robot current velocity and distance from target. Then it printes them with a frequency which is set in the ros parameter *my_freq*.
 
 Subscriber:
 	ass/pos_vel
